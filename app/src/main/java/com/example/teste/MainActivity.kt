@@ -44,6 +44,8 @@ import com.example.teste.model.data.local.appDataBase.AppDataBase
 import com.example.teste.model.data.local.entity.User
 import com.example.teste.model.data.local.repository.UserRepository
 import com.example.teste.ui.theme.TesteTheme
+import com.example.teste.view.LoginScreen
+import com.example.teste.viewmodel.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,8 +54,11 @@ import org.mindrot.jbcrypt.BCrypt
 
 
 class MainActivity : ComponentActivity() {
+    //inicializa o banco de dados
     private lateinit var db: AppDataBase
-    private lateinit var repo : UserRepository
+
+    //
+    private lateinit var viewModel: UserViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,9 +72,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
                     LoginScreen(onLogin = { userName, password ->
-                        validadeLogin(userName, password)
+                        viewModel.login(userName, password)
                     }, onRegister = { userName, password ->
-                        registerUser(userName, password)
+                        viewModel.registerUser(userName, password)
                     }
 
                     )
@@ -77,100 +82,10 @@ class MainActivity : ComponentActivity() {
 
             }
         }
-        showAllUsers()
     }
 
 
-
-
-
-
-    private fun showAllUsers(){
-        CoroutineScope(Dispatchers.IO).launch {
-            val users = db.userDao().getAllUsers()
-            users.forEach{user ->
-                println("Usuario: ${user.userName}, Senha: ${user.password}")
-            }
-        }
-    }
-
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LoginScreen(
-    onLogin: (String, String) -> Unit = { _, _ -> },
-    onRegister: (String, String) -> Unit = { _, _ -> }
-) {
-    Box {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            var userName by remember {
-                mutableStateOf("")
-            }
-            var password by remember {
-                mutableStateOf("")
-            }
 
-            Icon(
-                modifier = Modifier.padding(bottom = 4.dp),
-                painter = painterResource(R.drawable.ic_launcher_background),
-                contentDescription = null,
-            )
-
-            TextField(modifier = Modifier
-                .background(Color.Transparent)
-                .padding(4.dp),
-                value = userName,
-                shape = RoundedCornerShape(12.dp),
-                onValueChange = { newValue -> userName = newValue },
-                label = { Text(text = "User") })
-
-            TextField(modifier = Modifier
-                .background(Color.Transparent)
-                .padding(4.dp),
-                shape = RoundedCornerShape(12.dp),
-                value = password,
-                visualTransformation = PasswordVisualTransformation(),
-                onValueChange = { newValue -> password = newValue },
-                label = { Text(text = "Password") })
-
-            Button(onClick = {
-                print("Botao Entrar clicado")
-                onLogin(userName, password) }) {
-                Text(text = "Enter")
-            }
-            Button(onClick = {
-                print("Botão registrar clicado")
-                onRegister(userName, password) }) {
-                Text(text = "Register")
-            }
-        }
-    }
-}
-
-
-fun hashPassword(password: String): String {
-    return BCrypt.hashpw(password, BCrypt.gensalt())
-}
-
-fun checkPassword(password: String, hashed: String): Boolean {
-    return BCrypt.checkpw(password, hashed)
-}
-
-
-@Preview
-@Composable
-private fun LoginScreenPreview() {
-    LoginScreen(onLogin = { userName, password ->
-        userName; password
-    }, onRegister = { userName, password ->
-        userName; password
-    })
-
-
-}

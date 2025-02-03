@@ -1,10 +1,10 @@
 package com.example.teste.model.data.local.repository
 
-import com.example.teste.checkPassword
-import com.example.teste.hashPassword
 import com.example.teste.model.data.local.appDataBase.AppDataBase
 import com.example.teste.model.data.local.dao.UserDAO
 import com.example.teste.model.data.local.entity.User
+import com.example.teste.utils.checkPassword
+import com.example.teste.utils.hashPassword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -36,8 +36,8 @@ class UserRepository(private val userDAO: UserDAO) {
     }
 
     //Valida o Login
-    suspend fun validadeLogin(userName: String, password: String) {
-        withContext(Dispatchers.IO) {
+    suspend fun validadeLogin(userName: String, password: String): String {
+        return withContext(Dispatchers.IO) {
             val user = db.userDao().getUserbyName(userName)
             if (user != null && checkPassword(password, user.passWordHash)) {
                 "Login bem-sucedido!"

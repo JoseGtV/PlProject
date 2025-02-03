@@ -12,10 +12,20 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _loginResult = MutableLiveData<String>()
     val loginResult : LiveData<String> get() = _loginResult
 
+    private val _registerResult = MutableLiveData<String>()
+    val registerResult : LiveData<String> get() = _registerResult
+
     fun login(userName: String, password : String){
         viewModelScope.launch {
             val result = userRepository.validadeLogin(userName, password)
-            _loginResult.postValue( "Erro desconhecido")
+            _loginResult.postValue(result)
+        }
+    }
+
+    fun registerUser(userName: String, password: String) {
+        viewModelScope.launch {
+            val result = userRepository.registerUser(userName, password)
+            _registerResult.postValue(result)
         }
     }
 }
