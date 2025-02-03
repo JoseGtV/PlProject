@@ -38,11 +38,11 @@ class UserRepository(private val userDAO: UserDAO) {
     //Valida o Login
     suspend fun validadeLogin(userName: String, password: String): String {
         return withContext(Dispatchers.IO) {
-            val user = db.userDao().getUserbyName(userName)
+            val user = userDAO.getUserbyName(userName)
             if (user != null && checkPassword(password, user.passWordHash)) {
-                "Login bem-sucedido!"
+                return@withContext "Login bem-sucedido!"
             } else {
-                "Nome de usuário ou senha inválidos"
+                return@withContext "Nome de usuário ou senha inválidos"
             }
         }
     }
