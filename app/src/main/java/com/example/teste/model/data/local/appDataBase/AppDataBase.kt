@@ -1,4 +1,4 @@
-package com.example.teste.data.local.appDataBase
+package com.example.teste.model.data.local.appDataBase
 
 import android.content.Context
 import androidx.room.Database
@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.teste.data.local.dao.UserDAO
-import com.example.teste.data.local.entity.User
+import com.example.teste.model.data.local.dao.UserDAO
+import com.example.teste.model.data.local.entity.User
 
 @Database(entities = [User::class], version = 2, exportSchema = false)
 abstract class AppDataBase : RoomDatabase() {

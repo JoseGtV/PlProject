@@ -1,9 +1,9 @@
-package com.example.teste.data.local.dao
+package com.example.teste.model.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.teste.data.local.entity.User
+import com.example.teste.model.data.local.entity.User
 
 @Dao
 interface UserDAO {

@@ -1,4 +1,4 @@
-package com.example.teste.data.local.entity
+package com.example.teste.model.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

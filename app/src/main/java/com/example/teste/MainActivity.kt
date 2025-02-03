@@ -39,8 +39,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.teste.data.local.appDataBase.AppDataBase
-import com.example.teste.data.local.entity.User
+import com.example.PlProject.R
+import com.example.teste.model.data.local.appDataBase.AppDataBase
+import com.example.teste.model.data.local.entity.User
+import com.example.teste.model.data.local.repository.UserRepository
 import com.example.teste.ui.theme.TesteTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,11 +53,13 @@ import org.mindrot.jbcrypt.BCrypt
 
 class MainActivity : ComponentActivity() {
     private lateinit var db: AppDataBase
+    private lateinit var repo : UserRepository
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = AppDataBase.getInstance(this)
+
         enableEdgeToEdge()
         setContent {
             TesteTheme {
@@ -76,59 +80,10 @@ class MainActivity : ComponentActivity() {
         showAllUsers()
     }
 
-    private fun validadeLogin(userName: String, password: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val user = db.userDao().getUserbyName(userName)
-            withContext(Dispatchers.Main) {
-                if (user != null && checkPassword(password, user.passWordHash)) {
-                    Toast.makeText(this@MainActivity, "Login bem-sucedido", Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Toast.makeText(
-                        this@MainActivity, "Usuário ou senha inválidos", Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
-    }
 
 
-    private fun registerUser(userName: String, password: String) {
 
-        if(userName.isBlank() || password.isBlank()){
-            Toast.makeText(
-                this@MainActivity,"Os campos nao podem estar vazios!",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-        val hashedPassword = hashPassword(password)
-        val newUser =
-            User(
-                userName = userName,
-                password = password,
-                passWordHash = hashedPassword)
-        CoroutineScope(Dispatchers.IO).launch {
-            val isTaken = db.userDao().isUserNameTaken(userName)
 
-            if (isTaken) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(
-                        this@MainActivity, "Nome de Usuario já em uso", Toast.LENGTH_LONG
-                    ).show()
-                }
-                return@launch
-            }
-
-            db.userDao().insertUser(newUser)
-            withContext(Dispatchers.Main) {
-                Toast.makeText(
-                    this@MainActivity, "Usuário cadastrado com sucesso!", Toast.LENGTH_LONG
-                ).show()
-
-            }
-        }
-
-    }
 
     private fun showAllUsers(){
         CoroutineScope(Dispatchers.IO).launch {
